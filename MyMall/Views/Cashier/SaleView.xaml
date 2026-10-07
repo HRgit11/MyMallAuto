@@ -1,0 +1,179 @@
+﻿<UserControl x:Class="MyMall.Views.Cashier.SaleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Loaded="UserControl_Loaded">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="400"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Левая часть: товары -->
+        <Grid Grid.Column="0" Margin="0,0,15,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Text="Выбор товара"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="#2C3E50"
+                       Margin="0,0,0,15"/>
+
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                         Padding="10" FontSize="14"/>
+
+                <Button Grid.Column="1"
+                        Content="🔍 Найти"
+                        Command="{Binding SearchCommand}"
+                        Padding="15,8"
+                        Margin="10,0,0,0"
+                        Background="#3498DB"
+                        Foreground="White"
+                        BorderThickness="0"
+                        Cursor="Hand"/>
+            </Grid>
+
+            <DataGrid Grid.Row="2"
+                      ItemsSource="{Binding Products}"
+                      SelectedItem="{Binding SelectedProduct}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      Background="White"
+                      BorderBrush="#DDD"
+                      BorderThickness="1"
+                      RowHeight="40"
+                      MouseDoubleClick="DataGrid_MouseDoubleClick">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N2} ₽}" Width="100"/>
+                    <DataGridTextColumn Header="Остаток" Binding="{Binding Quantity}" Width="80"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Button Grid.Row="3"
+                    Content="➕ Добавить в корзину"
+                    Command="{Binding AddToCartCommand}"
+                    Padding="15,10"
+                    Margin="0,10,0,0"
+                    Background="#27AE60"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Cursor="Hand"/>
+        </Grid>
+
+        <!-- Правая часть: корзина -->
+        <Border Grid.Column="1"
+                Background="White"
+                BorderBrush="#DDD"
+                BorderThickness="1"
+                Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Корзина"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#2C3E50"
+                           Margin="0,0,0,15"/>
+
+                <DataGrid Grid.Row="1"
+                          ItemsSource="{Binding Cart}"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="False"
+                          IsReadOnly="False"
+                          Background="White"
+                          BorderBrush="#DDD"
+                          BorderThickness="1"
+                          RowHeight="35">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Товар" Binding="{Binding ProductName}" Width="*" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="60"/>
+                        <DataGridTextColumn Header="Цена" Binding="{Binding TotalPrice, StringFormat={}{0:N2}}" Width="80" IsReadOnly="True"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- Способ оплаты -->
+                <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,15,0,0">
+                    <TextBlock Text="Оплата:" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <RadioButton Content="Наличные" 
+                                 IsChecked="{Binding PaymentMethod, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Cash}"
+                                 Margin="0,0,10,0"/>
+                    <RadioButton Content="Карта"
+                                 IsChecked="{Binding PaymentMethod, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Card}"/>
+                </StackPanel>
+
+                <!-- Итого -->
+                <Border Grid.Row="3"
+                        Background="#ECF0F1"
+                        Padding="15"
+                        Margin="0,15,0,0">
+                    <Grid>
+                        <TextBlock Text="ИТОГО:" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding TotalAmount, StringFormat={}{0:N2} ₽}"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="#27AE60"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Сообщения -->
+                <StackPanel Grid.Row="4" Margin="0,10,0,0">
+                    <TextBlock Text="{Binding ErrorMessage}"
+                               Foreground="#E74C3C"
+                               TextWrapping="Wrap"
+                               MinHeight="20"/>
+                    <TextBlock Text="{Binding SuccessMessage}"
+                               Foreground="#27AE60"
+                               TextWrapping="Wrap"
+                               MinHeight="20"/>
+                </StackPanel>
+
+                <!-- Кнопки -->
+                <StackPanel Grid.Row="5" Margin="0,10,0,0">
+                    <Button Content="✅ Оформить продажу"
+                            Command="{Binding CompleteSaleCommand}"
+                            Padding="15,12"
+                            Background="#27AE60"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Margin="0,0,0,5"/>
+
+                    <Button Content="🗑️ Очистить корзину"
+                            Command="{Binding ClearCartCommand}"
+                            Padding="15,8"
+                            Background="#E74C3C"
+                            Foreground="White"
+                            BorderThickness="0"
+                            Cursor="Hand"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

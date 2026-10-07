@@ -1,0 +1,102 @@
+﻿<Window x:Class="MyMall.Views.Admin.AdminMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MyMall — Панель администратора" 
+        Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5"
+        xmlns:vm="clr-namespace:MyMall.ViewModels.Admin"
+        xmlns:views="clr-namespace:MyMall.Views.Admin">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+   
+        <Border Grid.Column="0" Background="#2C3E50">
+            <StackPanel>
+            
+                <Border Padding="20" Background="#1A252F">
+                    <StackPanel>
+                        <TextBlock Text="MyMall" 
+                                   FontSize="24" 
+                                   FontWeight="Bold"
+                                   Foreground="White"/>
+                        <TextBlock Text="Панель администратора" 
+                                   FontSize="11"
+                                   Foreground="#95A5A6"
+                                   Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Padding="20,15" Background="#34495E">
+                    <StackPanel>
+                        <TextBlock Text="{Binding UserName}" 
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="White"/>
+                        <TextBlock Text="Администратор" 
+                                   FontSize="11"
+                                   Foreground="#95A5A6"
+                                   Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+
+ 
+                <StackPanel Margin="0,20,0,0">
+                    <Button Content="📦 Товары"
+                            Command="{Binding ShowProductsCommand}"
+                            Style="{DynamicResource  MenuButtonStyle}"/>
+
+                    <Button Content="📁 Категории"
+                            Command="{Binding ShowCategoriesCommand}"
+                            Style="{DynamicResource  MenuButtonStyle}"/>
+
+                    <Button Content="📊 Отчёты"
+                            Command="{Binding ShowReportsCommand}"
+                            Style="{DynamicResource  MenuButtonStyle}"/>
+                </StackPanel>
+
+                <Button Content="🚪 Выйти"
+                        Command="{Binding LogoutCommand}"
+                        Style="{DynamicResource  MenuButtonStyle}"
+                        Margin="0,20,0,0"
+                        Foreground="#E74C3C"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0" Background="White" Padding="20,0">
+                <Grid>
+                    <TextBlock Text="Добро пожаловать в панель администратора"
+                               VerticalAlignment="Center"
+                               FontSize="16"
+                               Foreground="#7F8C8D"/>
+                </Grid>
+            </Border>
+
+
+            <ContentControl Grid.Row="1" 
+                Content="{Binding CurrentViewModel}"
+                Margin="20">
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type vm:ProductsViewModel}">
+                        <views:ProductsView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:CategoriesViewModel}">
+                        <views:CategoriesView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
+                        <views:ReportsView/>
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</Window>
